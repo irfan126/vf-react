@@ -4,7 +4,9 @@
   "private": true,
   "dependencies": {
     "bootstrap": "^4.0.0",
+    "express": "^4.16.4",
     "jquery": "^3.3.1",
+    "mongoose": "^5.4.11",
     "node-sass-chokidar": "^1.2.2",
     "npm-run-all": "^4.1.2",
     "popper.js": "^1.14.3",
@@ -17,13 +19,17 @@
     "redux-thunk": "^2.3.0"
   },
   "scripts": {
+    "start": "node server.js",
     "build-css": "node-sass-chokidar ./src -o ./src",
     "watch-css": "npm run build-css && node-sass-chokidar ./src -o ./src --watch --recursive",
-    "strat-js": "react-scripts start",
-    "start": "npm-run-all -p watch-css strat-js",
+    "start-js": "react-scripts start",
+    "start": "npm-run-all -p watch-css start-js",
     "build-js": "react-scripts build",
     "build": "npm-run-all build-css build-js",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.10"
   }
 }

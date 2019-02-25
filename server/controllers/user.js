@@ -49,7 +49,7 @@ exports.register = function(req, res) {
 		}
 
 		if (existingUser) {
-			return res.status(422).send({title: 'Invaild email', detail: 'User with this email already exist'});
+			return res.status(422).send({errors: [{title: 'Invaild email', detail: 'User with this email already exist'}]});
 		}
 
 		const user = new User({

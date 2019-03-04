@@ -19,7 +19,6 @@ class RentalListing extends React.Component {
 			</section>
 			)
 	}
-
 }
 
 function mapStateToProps(state) {

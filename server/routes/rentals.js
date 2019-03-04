@@ -26,10 +26,10 @@ router.get('/:id', function(req,res) {
 
 //Adding a rental advert to DB
 router.post('', UserCtrl.authMiddleware, function(req,res){
-	const {title, city, street, category, image, shared, bedroom, description, dailyRate } = req.body;
+	const {title, city, street, category, image, shared, bedrooms, description, dailyRate } = req.body;
 	const user = res.locals.user;
 
-	const rental = new Rental({title, city, street, category, image, shared, bedroom, description, dailyRate});
+	const rental = new Rental({title, city, street, category, image, shared, bedrooms, description, dailyRate});
 	rental.user = user; //adding USER to rental object
 
 	//Adding new Rental to RENTAL DB

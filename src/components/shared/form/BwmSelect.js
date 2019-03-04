@@ -1,25 +1,31 @@
 import React from 'react';
 
-export const BwmInput = ({
+export const BwmSelect = ({
   input,
   label,
   type,
-  symbol,
+  options,
   className,
   meta: { touched, error, warning }
-}) => (
+}) => {
+
+  function renderOption() {
+    return options.map((option, index) => {
+        return <option key={index} value={option}> {option} </option>
+    });
+  }
+
+  return(
   <div className= 'form-group'>
     <label>{label}</label>
     <div className='input-group'>
-      { symbol &&
-        <div className='input-group-prepend'>
-          <div className='input-group-text'> {symbol}</div>
-        </div>
-      }
-      <input {...input} type={type} className={className} />
+      <select {...input} className={className}>
+        {renderOption()}
+      </select>
     </div>
     {touched && ((error && 
       <div className='alert alert-danger'>{error}</div>)
     )}
   </div>
-)
+  )
+}

@@ -4,14 +4,38 @@ export class BwmFileUpload extends React.Component {
 
 	constructor() {
 		super();
-	
+		
+		//this.setupReader();
+
+		this.state ={
+			selectedFile: {}
+		//	imageBase64: ''
+		}
+
 		this.onChange = this.onChange.bind(this);
 	}
+
+	//setupReader() {
+	//	this.reader = new FileReader();
+
+	//	this.reader.addEventListener('load', (event) => {
+	//		this.setState({imageBase64: event.target.result});
+	//	});
+	//}
 
 	onChange(event) {
 		const {input: {onChange}} = this.props;
 
 		onChange('https://booksync-jerga-prod.s3.amazonaws.com/uploads/rental/image/13/image.jpeg');
+		//const selectedFile = event.target.files[0];
+
+		//if (selectedFile) {
+		//	this.setState({
+		//		selectedFile
+		//	});
+
+		//	this.reader.readDataURL(selectedFile);
+		//}
 	}
 
 	render() {

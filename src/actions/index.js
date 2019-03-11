@@ -11,12 +11,37 @@ import { FETCH_RENTAL_BY_ID_SUCCESS,
          LOGOUT,
          FETCH_USER_BOOKINGS_SUCCESS,
          FETCH_USER_BOOKINGS_FAIL,
-         FETCH_USER_BOOKINGS_INIT } 
+         FETCH_USER_BOOKINGS_INIT,
+         UPDATE_RENTALS_SUCCESS,
+         UPDATE_RENTALS_FAIL,
+         RESET_RENTAL_ERRORS,
+         RELOAD_MAP,
+         RELOAD_MAP_FINISH } 
          from './types';
 
-// RENTALS ACTION -------------------------------------
-
 const axiosInstance = axiosService.getInstance();
+
+//check user looged in for when editing rentals
+
+export const verifyRentalOwner = (rentalId) => {
+    return axiosInstance.get(`/rentals/${rentalId}/verify-user`);
+}
+
+//update map after edit rental
+
+export const reloadMap = () => {
+    return {
+        type: RELOAD_MAP
+    }
+}
+
+export const reloadMapFinish = () => {
+    return {
+       type: RELOAD_MAP_FINISH
+    }
+}
+
+// RENTALS ACTION -------------------------------------
 
 const fetchRentalByIdInit = () => {
     return{
@@ -88,6 +113,42 @@ export const createRental = (rentalData) => {
     err => Promise.reject(err.response.data.errors)
  )
 }
+
+//ACTION TO EDIT RENTALS
+
+export const resetRentalErrors = () => {
+    return {
+        type: RESET_RENTAL_ERRORS
+    }
+}
+
+const updateRentalSuccess = (updatedRental) => {
+    return {
+        type: UPDATE_RENTALS_SUCCESS,
+        rental: updatedRental
+    }
+}
+
+const updateRentalFail = (errors) => {
+    return {
+        type: UPDATE_RENTALS_FAIL,
+        errors
+    }
+}
+
+export const updateRental = (id, rentalData) => dispatch => {
+    return axiosInstance.patch(`/rentals/${id}`, rentalData)
+        .then(res => res.data)
+        .then(updatedRental => {
+            dispatch(updateRentalSuccess(updatedRental));
+
+            if (rentalData.city || rentalData.street) {
+                dispatch(reloadMap());
+            }
+        })
+        .catch(({response}) => dispatch(updateRentalFail(response.data.errors)))
+  
+}   
 
 // USER BOOKINGS ACTIONS ------------------------------------------
 

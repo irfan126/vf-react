@@ -1,21 +1,42 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import RentalMap from './RentalMap';
+import Booking from '../../../components/booking/Booking';
+
+import { UserGuard } from '../../shared/auth/UserGuard';
 import { RentalAssets } from './RentalAssets';
 import {toUpperCase} from '../../../helpers';
-import { toast } from 'react-toastify';
 
 import { EditableInput } from '../../shared/editable/EditableInput';
 import { EditableText } from '../../shared/editable/EditableText';
 import { EditableSelect } from '../../shared/editable/EditableSelect';
+import { EditableImage } from '../../shared/editable/EditableImage';
 
-import * as actions from '../../../actions'
+import * as actions from '../../../actions';
 
-export class RentalDetailUpdate extends React.Component {
+class RentalUpdate extends React.Component {
 
 	constructor() {
 		super();
 
+		this.state = {
+			isAllowed: false,
+			isFetching: true,
+		}
+
 		this.updateRental = this.updateRental.bind(this);
 		this.resetRentalErrors = this.resetRentalErrors.bind(this);
+		this.verifyRentalOwner = this.verifyRentalOwner.bind(this);
+	}
+
+	componentWillMount(){
+		// Dispatch action
+		const rentalId =this.props.match.params.id;
+		this.props.dispatch(actions.fetchRentalById(rentalId));
+	}
+
+	componentDidMount() {
+		this.verifyRentalOwner();
 	}
 
 	updateRental(rentalData) {
@@ -28,15 +49,46 @@ export class RentalDetailUpdate extends React.Component {
 		this.props.dispatch(actions.resetRentalErrors());
 	}
 
-	render() {
-	const { rental, errors } = this.props;
+	verifyRentalOwner() {
+		const rentalId =this.props.match.params.id;
+		this.setState({isFetching: true});
 
-		if (errors && errors.length >0) {
-			toast.error(errors[0].detail);               
-		}
+		return actions.verifyRentalOwner(rentalId).then(
+			()=> {
+				this.setState({isAllowed: true, isFetching: false})
+			},
+			() => {
+				this.setState({isAllowed: false, isFetching: false})
+		});
+	}
 
-		return(
-			<div className='rental'>
+	render(){
+		const { rental, errors } = this.props;
+		const { isFetching, isAllowed } = this.state;
+
+		if (rental._id) {
+					return (
+					<UserGuard isAllowed={isAllowed} isFetching={isFetching}>
+						<section id='rentalDetails'>
+							  <div className='upper-section'>
+							    <div className='row'>
+							      <div className='col-md-6'>
+							        <EditableImage entity={rental} 
+											       entityField={'image'} 
+											       errors={errors} 
+											       updateEntity={this.updateRental}> 
+							     	</EditableImage>
+								  </div>
+								  <div className='col-md-6'>
+							        <RentalMap location={`${rental.city}, ${rental.street}`} />
+							      </div>
+							    </div>
+							  </div>
+
+							  <div className='details-section'>
+							    <div className='row'>
+							      <div className='col-md-8'>
+							      			<div className='rental'>
 				<label className={`rental-label rental-type ${rental.category}`}> Shared </label>
 				<EditableSelect entity={rental} 
 							   entityField={'shared'} 
@@ -111,6 +163,29 @@ export class RentalDetailUpdate extends React.Component {
 				<hr></hr>
 				<RentalAssets />
 			</div>
-		)
+							      </div>
+							      <div className='col-md-4'> 
+							      	<Booking rental={rental} />
+							      </div>
+							    </div>
+							  </div>
+						</section>
+					</UserGuard>
+					)
+		} else {
+			return(
+				<h1> Loading.... </h1>
+				)
+		}
 	}
 }
+
+function mapStateToProps(state) {
+	return {
+		rental: state.rental.data,
+		errors: state.rental.errors
+	}
+}
+
+export default connect(mapStateToProps)(RentalUpdate)
+

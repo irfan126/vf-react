@@ -8,6 +8,7 @@ import 'bootstrap/dist/js/bootstrap.min.js';
 import 'font-awesome/css/font-awesome.min.css';
 import 'bootstrap-daterangepicker/daterangepicker.css';
 import 'react-toastify/dist/ReactToastify.min.css';
+import 'react-image-crop/dist/ReactCrop.css';
 
 ReactDOM.render(<App />, document.getElementById('root'));
 registerServiceWorker();
